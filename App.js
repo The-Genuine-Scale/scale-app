@@ -1,20 +1,48 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeStack from "./stacks/HomeStack";
+import ExploreStack from "./stacks/ExploreStack";
+import ProfileStack from "./stacks/ProfileStack";
 
-export default function App() {
+const Tab = createBottomTabNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === "Home") {
+              iconName = focused ? "home" : "home";
+            } else if (route.name === "Explore") {
+              iconName = focused ? "compass" : "compass";
+            } else if (route.name === "Profile") {
+              iconName = focused ? "user" : "user";
+            }
+
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+          headerShown: false,
+          tabBarActiveTintColor: "blue",
+          tabBarInactiveTintColor: "gray",
+          tabBarStyle: [
+            {
+              display: "flex",
+            },
+            null,
+          ],
+        })}
+      >
+        <Tab.Screen name="Home" component={HomeStack} />
+        <Tab.Screen name="Explore" component={ExploreStack} />
+        <Tab.Screen name="Profile" component={ProfileStack} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
