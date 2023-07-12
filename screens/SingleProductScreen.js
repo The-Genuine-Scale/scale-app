@@ -35,7 +35,7 @@ const SingleProductScreen = ({ route }) => {
     return (
       productData && (
         <>
-          <CustomHeader />
+          <CustomHeader  signout={true}/>
           <View style={styles.container}>
             <CustomCarousel data={productData.imgUrl} />
             <View style={styles.detailsContainer}>

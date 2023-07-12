@@ -179,7 +179,7 @@ const HomeScreen = () => {
     );
     return (
       <>
-        <CustomHeader />
+        <CustomHeader  signout={true}/>
         <View style={styles.mainContainer}>
         <Text style={styles.greetingText}>
           Hey <Text style={styles.boldText}>User!</Text>

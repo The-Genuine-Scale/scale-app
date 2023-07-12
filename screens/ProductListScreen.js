@@ -55,7 +55,7 @@ const ProductListScreen = ({ route }) => {
   const ProductList = () => {
     return (
       <>
-        <CustomHeader />
+        <CustomHeader  signout={true} />
         <FlatList
           style={{ padding: 20 }}
           showsVerticalScrollIndicator={false}
