@@ -6,6 +6,7 @@ import CustomHeader from "../components/CustomHeader";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import ProductListScreen from "../screens/ProductListScreen";
+import SingleProductScreen from "../screens/SingleProductScreen";
 
 const Stack = createStackNavigator();
 
@@ -39,6 +40,13 @@ export default function HomeStack() {
           <Stack.Screen
             name="ProductListScreen"
             component={ProductListScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="SingleProductScreen"
+            component={SingleProductScreen}
             options={{
               headerShown: false,
             }}

@@ -7,6 +7,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  SafeAreaView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CustomHeader from "../components/CustomHeader";
@@ -50,19 +51,19 @@ const HomeScreen = () => {
       id: 1,
       title: "Gifts",
       image: require("../assets/productCategory1.png"),
-      link: "gifts",
+      link: "gift",
     },
     {
       id: 2,
       title: "Books",
       image: require("../assets/productCategory2.png"),
-      link: "books",
+      link: "birthday",
     },
     {
       id: 3,
       title: "Lamps",
       image: require("../assets/productCategory3.png"),
-      link: "lamps",
+      link: "cake",
     },
     {
       id: 4,
@@ -178,6 +179,8 @@ const HomeScreen = () => {
     );
     return (
       <>
+        <CustomHeader />
+        <View style={styles.mainContainer}>
         <Text style={styles.greetingText}>
           Hey <Text style={styles.boldText}>User!</Text>
         </Text>
@@ -215,6 +218,7 @@ const HomeScreen = () => {
           numColumns={3}
           style={styles.categoryContainer}
         />
+        </View>
       </>
     );
   };
@@ -225,11 +229,14 @@ const HomeScreen = () => {
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-      <CustomHeader />
-      <FlatList
-        style={styles.container}
-        ListHeaderComponent={<HomeContainer />}
-      />
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={<HomeContainer />}
+          ListFooterComponent={<View style={styles.bottomSpace} />}
+        />
+      </SafeAreaView>
     </ImageBackground>
   );
 };
@@ -237,11 +244,15 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+  },
+  mainContainer:{
+    margin: 20,
+  },
+  bottomSpace: {
+    height: 60,
   },
   greetingText: {
     fontSize: 24,
-    marginTop: 20,
     marginBottom: 10,
   },
   boldText: {

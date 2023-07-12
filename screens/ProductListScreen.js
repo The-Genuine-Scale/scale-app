@@ -1,18 +1,50 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+  SafeAreaView,
+} from "react-native";
+import { getProductsByCategory } from "../api/product";
+import { useNavigation } from "@react-navigation/native";
+import CustomHeader from "../components/CustomHeader";
 
 const ProductListScreen = ({ route }) => {
   const { categoryData } = route.params;
+  const [productList, setProductList] = useState([]);
+  const navigation = useNavigation();
 
+  useEffect(() => {
+    fetchProductsByCategory();
+  }, []);
+
+  const fetchProductsByCategory = async () => {
+    try {
+      const products = await getProductsByCategory(categoryData);
+      setProductList(products);
+    } catch (error) {
+      console.log("Error fetching products:", error);
+    }
+  };
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
       style={styles.productCard}
       onPress={() => handleProductPress(item.docId)}
     >
-      <Image source={item.image} style={styles.productImage} resizeMode="cover" />
+      <Image
+        source={{ uri: item.imgUrl[0] }}
+        style={styles.productImage}
+        resizeMode="cover"
+      />
       <View style={styles.productOverlay}>
-        <Text style={styles.productPrice}>{item.price}</Text>
-        <Text style={styles.productName}>{item.name}</Text>
+        <View style={styles.productInfo}>
+          <Text style={styles.productName}>{item.name}</Text>
+          <Text style={styles.productPrice}>&#8377;{item.price}</Text>
+        </View>
         <Text style={styles.sellerName}>{item.seller}</Text>
       </View>
       <TouchableOpacity style={styles.wishlistButton}>
@@ -20,72 +52,100 @@ const ProductListScreen = ({ route }) => {
       </TouchableOpacity>
     </TouchableOpacity>
   );
-
+  const ProductList = () => {
+    return (
+      <>
+        <CustomHeader />
+        <FlatList
+          style={{ padding: 20 }}
+          showsVerticalScrollIndicator={false}
+          data={productList}
+          renderItem={renderProductItem}
+          keyExtractor={(item) => item.docId.toString()}
+          numColumns={2}
+        />
+      </>
+    );
+  };
   const handleProductPress = (docId) => {
-    // Navigate to the Product Details Page using the docId
-    // Implement your navigation logic here
+    navigation.navigate("SingleProductScreen", { docId });
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={categoryData}
-        renderItem={renderProductItem}
-        keyExtractor={(item) => item.docId.toString()}
-        numColumns={2}
-      />
-    </View>
+    <ImageBackground
+      source={require("../assets/gradient.png")}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          ListHeaderComponent={<ProductList />}
+          ListFooterComponent={<View style={styles.bottomSpace} />}
+        />
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+  },
+  bottomSpace: {
+    height: 60,
   },
   productCard: {
     flex: 1,
     margin: 10,
     borderRadius: 10,
-    overflow: 'hidden',
-    aspectRatio: 0.8, // Adjust the aspect ratio based on your desired image height and width
+    overflow: "hidden",
+    aspectRatio: 0.7,
   },
   productImage: {
     flex: 1,
   },
   productOverlay: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     padding: 10,
+    justifyContent: "space-between",
   },
+  productInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
   productPrice: {
-    color: 'white',
+    color: "white",
     fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'right',
+    fontWeight: "bold",
+    textAlign: "right",
   },
   productName: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   sellerName: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
     marginTop: 5,
+    marginBottom: 0,
   },
   wishlistButton: {
-    position: 'absolute',
+    height: 25,
+    position: "absolute",
     bottom: 10,
     right: 10,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   wishlistIcon: {
-    fontSize: 24,
-    color: 'white',
+    fontSize: 20,
+    color: "white",
   },
 });
 

@@ -15,7 +15,7 @@ const CustomHeader = () => {
     <View style={styles.headerContainer}>
     <Image source={require('../assets/logo.png')} style={styles.headerLogo} resizeMode="contain" />
       <TouchableOpacity onPress={handleSignOutPress} style={styles.headerButton}>
-        <Icon name="sign-out" size={20} color="black" />
+        <Icon name="sign-out" size={30} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -26,14 +26,13 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: "transparent"
-  },
-  headerButton: {
-    marginRight: 10,
+    backgroundColor: "transparent",
+    margin: 20,
   },
   headerLogo: {
     width: 150,
-    height: 40,
+    height: 41,
+    marginLeft:-15,
   },
 };
 

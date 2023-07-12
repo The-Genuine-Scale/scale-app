@@ -66,17 +66,14 @@ export async function getProducts() {
 }
 
 export async function getProductsByCategory(category) {
-  console.log("13");
   const prodCol = collection(db, "Products");
   let prodSnapshot;
-
   if (category) {
     const q = query(prodCol, where("category", "==", category));
     prodSnapshot = await getDocs(q);
   } else {
     prodSnapshot = await getDocs(prodCol);
   }
-
   const prodList = prodSnapshot.docs.map((doc) => doc.data());
   return prodList;
 }
