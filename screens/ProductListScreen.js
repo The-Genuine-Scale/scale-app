@@ -1,74 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
-  Image,
-  TouchableOpacity,
   ImageBackground,
   SafeAreaView,
 } from "react-native";
 import { getProductsByCategory } from "../api/product";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import CustomHeader from "../components/CustomHeader";
+import ProductCard from "../components/ProductCard";
+import { retrieveData } from "../localstorage/localstorage";
+import { getWishlistItems } from "../api/wishlist";
 
 const ProductListScreen = ({ route }) => {
   const { categoryData } = route.params;
   const [productList, setProductList] = useState([]);
-  const navigation = useNavigation();
 
-  useEffect(() => {
-    fetchProductsByCategory();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProductsByCategory();
+    }, [])
+  );
 
   const fetchProductsByCategory = async () => {
     try {
       const products = await getProductsByCategory(categoryData);
-      setProductList(products);
+      const userId = await retrieveData("uid");
+      const wishlist = await getWishlistItems(userId);
+      console.log(wishlist)
+      const updatedProductList = products.map((product) => ({
+        ...product,
+        inWishlist: wishlist.some((item) => item.productId === product.docId),
+      }));
+      console.log(updatedProductList)
+      setProductList(updatedProductList);
     } catch (error) {
       console.log("Error fetching products:", error);
     }
   };
-  const renderProductItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.productCard}
-      onPress={() => handleProductPress(item.docId)}
-    >
-      <Image
-        source={{ uri: item.imgUrl[0] }}
-        style={styles.productImage}
-        resizeMode="cover"
-      />
-      <View style={styles.productOverlay}>
-        <View style={styles.productInfo}>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.productPrice}>&#8377;{item.price}</Text>
-        </View>
-        <Text style={styles.sellerName}>{item.seller}</Text>
-      </View>
-      <TouchableOpacity style={styles.wishlistButton}>
-        <Text style={styles.wishlistIcon}>♡</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-  const ProductList = () => {
-    return (
-      <>
-        <CustomHeader  signout={true} />
-        <FlatList
-          style={{ padding: 20 }}
-          showsVerticalScrollIndicator={false}
-          data={productList}
-          renderItem={renderProductItem}
-          keyExtractor={(item) => item.docId.toString()}
-          numColumns={2}
-        />
-      </>
-    );
-  };
-  const handleProductPress = (docId) => {
-    navigation.navigate("SingleProductScreen", { docId });
+
+  const handleWishlistUpdate = (docId) => {
+    const updatedProductList = productList.map((product) => {
+      if (product.docId === docId) {
+        return {
+          ...product,
+          inWishlist: !product.inWishlist,
+        };
+      }
+      return product;
+    });
+    setProductList(updatedProductList);
   };
 
   return (
@@ -78,10 +60,23 @@ const ProductListScreen = ({ route }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
-        <FlatList
-          ListHeaderComponent={<ProductList />}
-          ListFooterComponent={<View style={styles.bottomSpace} />}
-        />
+        <View style={styles.contentContainer}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={productList}
+            renderItem={({ item }) => (
+              <ProductCard
+                item={item}
+                inWishlist={item.inWishlist}
+                onUpdateWishlist={handleWishlistUpdate}
+              />
+            )}
+            keyExtractor={(item) => item.docId.toString()}
+            numColumns={2}
+            ListHeaderComponent={<CustomHeader signout={true} />}
+            ListFooterComponent={<View style={styles.bottomSpace} />}
+          />
+        </View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -91,8 +86,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: {
+    flex: 1,
+  },
   bottomSpace: {
-    height: 60,
+    height: 100,
   },
   productCard: {
     flex: 1,
@@ -118,7 +116,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-
   productPrice: {
     color: "white",
     fontSize: 14,
@@ -139,8 +136,8 @@ const styles = StyleSheet.create({
   wishlistButton: {
     height: 25,
     position: "absolute",
-    bottom: 10,
-    right: 10,
+    bottom: 3,
+    right: 5,
     backgroundColor: "transparent",
   },
   wishlistIcon: {
