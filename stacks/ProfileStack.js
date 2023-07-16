@@ -9,6 +9,7 @@ import MyAccountScreen from "../screens/MyAccountScreen";
 import CustomHeader from "../components/CustomHeader";
 import CartScreen from "../screens/CartScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
+import OrderHistoryScreen from "../screens/OrderHistoryScreen";
 
 const Stack = createStackNavigator();
 
@@ -53,6 +54,13 @@ export default function ProfileStack() {
       <Stack.Screen
         name="CheckoutScreen"
         component={CheckoutScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="OrderHistoryScreen"
+        component={OrderHistoryScreen}
         options={{
           headerShown: false,
         }}

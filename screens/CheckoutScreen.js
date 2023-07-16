@@ -6,8 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  SafeAreaView
 } from "react-native";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import CartCard from "../components/CartCard";
 import { getCartItems } from "../api/cart";
 import { getProductById } from "../api/product";
@@ -139,127 +139,139 @@ const CheckoutScreen = () => {
       }
     }
   };
+  const CheckoutContainer = () =>{
+    return (
 
-  return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }}>
-        <View style={styles.checkoutContainer}>
-          <View style={styles.checkoutSection}>
-            <Text style={styles.checkoutSectionLabel}>1</Text>
-            <View style={styles.checkoutForm}>
-              <Text style={styles.sectionTitle}>Personal Details</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Full Name"
-                value={personalDetails.name || ""}
-                onChangeText={(text) =>
-                  setPersonalDetails({ ...personalDetails, name: text })
-                }
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={personalDetails.email || ""}
-                onChangeText={(text) =>
-                  setPersonalDetails({ ...personalDetails, email: text })
-                }
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Mobile Number"
-                value={personalDetails.mobileNumber || ""}
-                onChangeText={(text) =>
-                  setPersonalDetails({ ...personalDetails, mobileNumber: text })
-                }
-              />
-              {/* Address List */}
-              <View style={styles.addressList}>
-                <Text style={styles.sectionTitle}>Select Address</Text>
-                {addressOptions.map((address) => (
-                  <TouchableOpacity
-                    key={address}
-                    style={styles.addressOption}
-                    onPress={() => setSelectedAddress(address)}
-                  >
-                    {/* Radio button */}
-                    <View
-                      style={[
-                        styles.radioButton,
-                        selectedAddress === address &&
-                          styles.radioButtonSelected,
-                      ]}
-                    />
-                    <Text style={styles.addressText}>{address}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              {/* Add New Address */}
-              <TextInput
-                style={styles.input}
-                placeholder="Add New Address"
-                value={newAddress}
-                onChangeText={(text) => setNewAddress(text)}
-              />
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={handleAddAddress}
-              >
-                <Text style={styles.buttonText}>Add Address</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-
-          <View style={styles.checkoutSection}>
-            <Text style={styles.checkoutSectionLabel}>2</Text>
-            <View style={styles.checkoutItems}>
-              <Text style={styles.sectionTitle}>Items</Text>
-              <FlatList
-                data={cartItems}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <CartCard
-                    item={item}
-                    onIncreaseQty={() => handleQuantityIncrease(item.docId)}
-                    onDecreaseQty={() => handleQuantityDecrease(item.docId)}
+    <ScrollView style={{ flex: 1 }}>
+      <View style={styles.checkoutContainer}>
+        <View style={styles.checkoutSection}>
+          <Text style={styles.checkoutSectionLabel}>1</Text>
+          <View style={styles.checkoutForm}>
+            <Text style={styles.sectionTitle}>Personal Details</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              value={personalDetails.name || ""}
+              onChangeText={(text) =>
+                setPersonalDetails({ ...personalDetails, name: text })
+              }
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={personalDetails.email || ""}
+              onChangeText={(text) =>
+                setPersonalDetails({ ...personalDetails, email: text })
+              }
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Mobile Number"
+              value={personalDetails.mobileNumber || ""}
+              onChangeText={(text) =>
+                setPersonalDetails({ ...personalDetails, mobileNumber: text })
+              }
+            />
+            {/* Address List */}
+            <View style={styles.addressList}>
+              <Text style={styles.sectionTitle}>Select Address</Text>
+              {addressOptions.map((address) => (
+                <TouchableOpacity
+                  key={address}
+                  style={styles.addressOption}
+                  onPress={() => setSelectedAddress(address)}
+                >
+                  {/* Radio button */}
+                  <View
+                    style={[
+                      styles.radioButton,
+                      selectedAddress === address &&
+                        styles.radioButtonSelected,
+                    ]}
                   />
-                )}
-                contentContainerStyle={styles.cartListContainer}
-              />
+                  <Text style={styles.addressText}>{address}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          </View>
-
-          {/* Payment Method */}
-          <View style={[styles.checkoutSection, styles.paymentSection]}>
-            <Text style={styles.checkoutSectionLabel}>3</Text>
-            <View style={styles.checkoutForm}>
-              <Text style={styles.sectionTitle}>Payment Method</Text>
-              <TouchableOpacity
-                style={[
-                  styles.paymentOption,
-                  paymentMethod === "cash_on_deliver" &&
-                    styles.paymentOptionSelected,
-                ]}
-                onPress={() => setPaymentMethod("cash_on_deliver")}
-              >
-                {/* Radio button */}
-                <View
-                  style={[
-                    styles.radioButton,
-                    paymentMethod === "cash_on_deliver" &&
-                      styles.radioButtonSelected,
-                  ]}
-                />
-                <Text>Cash on Delivery</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={styles.payButton} onPress={handleCheckout}>
-              <Text style={styles.buttonText}>Pay</Text>
+            {/* Add New Address */}
+            <TextInput
+              style={styles.input}
+              placeholder="Add New Address"
+              value={newAddress}
+              onChangeText={(text) => setNewAddress(text)}
+            />
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={handleAddAddress}
+            >
+              <Text style={styles.buttonText}>Add Address</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-    </View>
+
+
+        <View style={styles.checkoutSection}>
+          <Text style={styles.checkoutSectionLabel}>2</Text>
+          <View style={styles.checkoutItems}>
+            <Text style={styles.sectionTitle}>Items</Text>
+            <FlatList
+              data={cartItems}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <CartCard
+                  item={item}
+                  onIncreaseQty={() => handleQuantityIncrease(item.docId)}
+                  onDecreaseQty={() => handleQuantityDecrease(item.docId)}
+                />
+              )}
+              contentContainerStyle={styles.cartListContainer}
+            />
+          </View>
+        </View>
+
+        {/* Payment Method */}
+        <View style={[styles.checkoutSection, styles.paymentSection]}>
+          <Text style={styles.checkoutSectionLabel}>3</Text>
+          <View style={styles.checkoutForm}>
+            <Text style={styles.sectionTitle}>Payment Method</Text>
+            <TouchableOpacity
+              style={[
+                styles.paymentOption,
+                paymentMethod === "cash_on_deliver" &&
+                  styles.paymentOptionSelected,
+              ]}
+              onPress={() => setPaymentMethod("cash_on_deliver")}
+            >
+              {/* Radio button */}
+              <View
+                style={[
+                  styles.radioButton,
+                  paymentMethod === "cash_on_deliver" &&
+                    styles.radioButtonSelected,
+                ]}
+              />
+              <Text>Cash on Delivery</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.payButton} onPress={handleCheckout}>
+            <Text style={styles.buttonText}>Pay</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ScrollView>
+  </View>
+
+    )
+  }
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={<CheckoutContainer />}
+        ListFooterComponent={<View style={styles.bottomSpace} />}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -267,6 +279,9 @@ const styles = {
   checkoutContainer: {
     paddingHorizontal: 16,
     paddingVertical: 24,
+  },
+  bottomSpace: {
+    height: 80,
   },
   checkoutSection: {
     marginBottom: 24,

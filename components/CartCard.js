@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const CartCard = ({ item, onIncreaseQty, onDecreaseQty }) => {
+  console.log(item)
   const handleIncreaseQty = () => {
     onIncreaseQty(item);
   };
@@ -24,13 +25,17 @@ const CartCard = ({ item, onIncreaseQty, onDecreaseQty }) => {
           <Text style={[styles.price, { color: "#39C61C" }]}>{item.price}</Text>
         </View>
         <View style={styles.quantityContainer}>
-          <TouchableOpacity onPress={handleDecreaseQty}>
-            <MaterialIcons name="remove-circle" size={24} color="#39C61C" />
-          </TouchableOpacity>
+          {onIncreaseQty && (
+            <TouchableOpacity onPress={handleDecreaseQty}>
+              <MaterialIcons name="remove-circle" size={24} color="#39C61C" />
+            </TouchableOpacity>
+          )}
           <Text style={styles.quantity}>{item.quantity}</Text>
-          <TouchableOpacity onPress={handleIncreaseQty}>
-            <MaterialIcons name="add-circle" size={24} color="#39C61C" />
-          </TouchableOpacity>
+          {onDecreaseQty && (
+            <TouchableOpacity onPress={handleIncreaseQty}>
+              <MaterialIcons name="add-circle" size={24} color="#39C61C" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
