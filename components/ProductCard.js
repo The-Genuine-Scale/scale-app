@@ -15,10 +15,13 @@ const ProductCard = ({ item, onPress, inWishlist, onPressWishlist }) => {
   const handleAddToWishlist = async () => {
     try {
       const userId = await retrieveData("uid");
+      if (userId === null) {
+        navigation.navigate("LoginScreen");
+      }
       await handleWishlist(userId, item.docId);
       setIsInWishlist(!isInWishlist);
-      if(onPressWishlist){
-        onPressWishlist()
+      if (onPressWishlist) {
+        onPressWishlist();
       }
     } catch (error) {
       console.log(error);

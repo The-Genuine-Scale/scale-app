@@ -18,7 +18,7 @@ const MyAccountScreen = () => {
   var userId;
   const getUserId = async () => {
     userId = await retrieveData("uid");
-    if (userId === null) {
+    if (!userId) {
       navigation.navigate("LoginScreen");
     }
   };

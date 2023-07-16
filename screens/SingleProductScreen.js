@@ -12,30 +12,92 @@ import { getProductById } from "../api/product";
 import CustomCarousel from "../components/CustomCarousel";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomHeader from "../components/CustomHeader";
+import { retrieveData } from "../localstorage/localstorage";
+import { getWishlistItems, handleWishlist } from "../api/wishlist";
+import { useNavigation } from "@react-navigation/native";
+import { addToCart, removeFromCart } from "../api/cart";
 
 const SingleProductScreen = ({ route }) => {
   const { docId } = route.params;
   const [productData, setProductData] = useState(null);
+  const [isInWishlist, setIsInWishlist] = useState(null);
+  const navigation = useNavigation();
+  const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
     fetchProductById();
   }, []);
-
+  const handleRemoveFromCart = async () => {
+    const userId = await retrieveData("uid");
+    if (!userId) {
+      navigate("LoginScreen");
+    }
+    try {
+      await removeFromCart(userId, docId);
+      setQuantity(quantity - 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleAddToCart = async () => {
+    const userId = await retrieveData("uid");
+    console.log(userId);
+    if (!userId) {
+      navigation.navigate("LoginScreen");
+    }
+    try {
+      const result = await addToCart(userId, docId);
+      console.log(result);
+      setQuantity(quantity + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleBuyNow = async () => {
+    const userId = await retrieveData("uid");
+    if (!userId) {
+      navigation.navigate("LoginScreen");
+    }
+    if (quantity < 1) {
+      setQuantity(1);
+      try {
+        await addToCart(userId, docId);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    navigation.navigate("CheckoutScreen");
+  };
   const fetchProductById = async () => {
     try {
       const product = await getProductById(docId);
+      const userId = await retrieveData("uid");
+      const wishlist = await getWishlistItems(userId);
+      const inWishlist = wishlist.some((item) => item.productId === docId);
+      setIsInWishlist(inWishlist);
       setProductData(product);
-      console.log(product);
     } catch (error) {
       console.log("Error fetching product data:", error);
     }
   };
-
+  const handleAddToWishlist = async () => {
+    try {
+      const userId = await retrieveData("uid");
+      if (userId === null) {
+        navigation.navigate("LoginScreen");
+      } else {
+        await handleWishlist(userId, docId);
+        setIsInWishlist(!isInWishlist);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const ProductContainer = () => {
     return (
       productData && (
         <>
-          <CustomHeader  signout={true}/>
+          <CustomHeader signout={true} />
           <View style={styles.container}>
             <CustomCarousel data={productData.imgUrl} />
             <View style={styles.detailsContainer}>
@@ -63,19 +125,41 @@ const SingleProductScreen = ({ route }) => {
                 <Text>{`(x${productData.ordersRated})`}</Text>
               </View>
               <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.wishlistButton}>
+                <TouchableOpacity
+                  style={styles.wishlistButton}
+                  onPress={handleAddToWishlist}
+                >
                   <MaterialIcons
-                    name={
-                      productData.inWishlist ? "favorite" : "favorite-border"
-                    }
+                    name={isInWishlist ? "favorite" : "favorite-border"}
                     size={24}
-                    color={productData.inWishlist ? "#39C61C" : "#000000"}
+                    color={isInWishlist ? "#39C61C" : "#39C61C"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Add to Bag</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                {quantity > 0 ? (
+                  <View style={styles.quantityContainer}>
+                    <TouchableOpacity
+                      style={styles.quantityButton}
+                      onPress={handleRemoveFromCart}
+                    >
+                      <Text style={styles.quantityButtonText}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.quantityText}>{quantity}</Text>
+                    <TouchableOpacity
+                      style={styles.quantityButton}
+                      onPress={handleAddToCart}
+                    >
+                      <Text style={styles.quantityButtonText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleAddToCart}
+                  >
+                    <Text style={styles.buttonText}>Add to Bag</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity style={styles.button} onPress={handleBuyNow}>
                   <Text style={styles.buttonText}>Buy Now</Text>
                 </TouchableOpacity>
               </View>
@@ -231,6 +315,50 @@ const styles = StyleSheet.create({
   findCoBuyerText: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  wishlistButton: {
+    backgroundColor: "transparent",
+    padding: 5,
+    borderRadius: 15,
+  },
+  button: {
+    backgroundColor: "#39C61C",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginLeft: 10,
+    borderRadius: 25,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  quantityContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#39C61C",
+    borderRadius: 25,
+  },
+  quantityButton: {
+    padding: 10,
+  },
+  quantityButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#39C61C",
+  },
+  quantityText: {
+    paddingHorizontal: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#39C61C",
   },
 });
 

@@ -20,17 +20,6 @@ function LoginScreen() {
   const [error, setError] = useState("");
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const checkUid = async () => {
-      const storedUid = await retrieveData("uid");
-      if (storedUid === null) {
-        navigation.navigate("HomeScreen");
-      }
-    };
-
-    checkUid();
-  }, []);
-
   const handleLogin = async () => {
     try {
       const auth = getAuth();

@@ -8,6 +8,7 @@ import SignupScreen from "../screens/SignupScreen";
 import ProductListScreen from "../screens/ProductListScreen";
 import SingleProductScreen from "../screens/SingleProductScreen";
 import WishlistScreen from "../screens/WishlistScreen";
+import CartScreen from "../screens/CartScreen";
 
 const Stack = createStackNavigator();
 
@@ -59,6 +60,20 @@ export default function HomeStack() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="CartScreen"
+            component={CartScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          {/* <Stack.Screen
+            name="CheckoutScreen"
+            component={CheckoutScreen}
+            options={{
+              headerShown: false,
+            }}
+          /> */}
         </Stack.Navigator>
       </View>
     </SafeAreaView>

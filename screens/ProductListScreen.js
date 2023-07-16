@@ -28,29 +28,14 @@ const ProductListScreen = ({ route }) => {
       const products = await getProductsByCategory(categoryData);
       const userId = await retrieveData("uid");
       const wishlist = await getWishlistItems(userId);
-      console.log(wishlist)
       const updatedProductList = products.map((product) => ({
         ...product,
         inWishlist: wishlist.some((item) => item.productId === product.docId),
       }));
-      console.log(updatedProductList)
       setProductList(updatedProductList);
     } catch (error) {
       console.log("Error fetching products:", error);
     }
-  };
-
-  const handleWishlistUpdate = (docId) => {
-    const updatedProductList = productList.map((product) => {
-      if (product.docId === docId) {
-        return {
-          ...product,
-          inWishlist: !product.inWishlist,
-        };
-      }
-      return product;
-    });
-    setProductList(updatedProductList);
   };
 
   return (
@@ -68,7 +53,6 @@ const ProductListScreen = ({ route }) => {
               <ProductCard
                 item={item}
                 inWishlist={item.inWishlist}
-                onUpdateWishlist={handleWishlistUpdate}
               />
             )}
             keyExtractor={(item) => item.docId.toString()}

@@ -27,6 +27,9 @@ const WishlistScreen = () => {
     try {
       const userId = await retrieveData("uid");
       const items = await getWishlistItems(userId);
+      if (userId === null) {
+        navigation.navigate("LoginScreen");
+      }
       const wishlistItemsWithDetails = await Promise.all(
         items.map(async (item) => {
           const product = await getProductById(item.productId);

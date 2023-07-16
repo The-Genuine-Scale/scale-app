@@ -7,6 +7,8 @@ import SignupScreen from "../screens/SignupScreen";
 import WishlistScreen from "../screens/WishlistScreen";
 import MyAccountScreen from "../screens/MyAccountScreen";
 import CustomHeader from "../components/CustomHeader";
+import CartScreen from "../screens/CartScreen";
+import CheckoutScreen from "../screens/CheckoutScreen";
 
 const Stack = createStackNavigator();
 
@@ -37,6 +39,20 @@ export default function ProfileStack() {
       <Stack.Screen
         name="SignupScreen"
         component={SignupScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="CartScreen"
+        component={CartScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="CheckoutScreen"
+        component={CheckoutScreen}
         options={{
           headerShown: false,
         }}
