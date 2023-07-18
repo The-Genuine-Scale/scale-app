@@ -104,7 +104,6 @@ export const getItemCount = async (uid, productId) => {
       const item = cartItems.find(item => item.productId === productId);
 
       if (item) {
-        console.log("qty", item.quantity)
         return item.quantity;
       } else {
         return 0;

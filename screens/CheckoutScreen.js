@@ -35,7 +35,6 @@ const CheckoutScreen = () => {
         fetchUserDetails(userId);
         fetchCartItems(userId);
         fetchAddresses(userId);
-        console.log("getUserId", userId);
       }
     };
     getUserId();
@@ -43,14 +42,12 @@ const CheckoutScreen = () => {
 
   const fetchUserDetails = async (userId) => {
     try {
-      console.log(userId);
       const userDetails = await getUserDetails(userId);
       setPersonalDetails({
         name: userDetails.name,
         mobileNumber: userDetails.mobileNumber,
         email: userDetails.email,
       });
-      console.log(personalDetails);
     } catch (error) {
       console.log(error);
     }
@@ -66,7 +63,6 @@ const CheckoutScreen = () => {
         })
       );
       setCartItems(cartItemsWithDetails);
-      console.log(cartItemsWithDetails);
     } catch (error) {
       console.log(error);
     }
@@ -75,7 +71,6 @@ const CheckoutScreen = () => {
     try {
       const addresses = await getAddressesByUser(userId);
       setAddressOptions(addresses);
-      console.log(addressOptions);
     } catch (error) {
       console.log(error);
     }
@@ -127,7 +122,6 @@ const CheckoutScreen = () => {
 
   const handleAddAddress = async () => {
     const userId = await retrieveData("uid");
-    console.log(userId, 2)
     if (newAddress) {
       try {
         await addAddressToUser(userId, newAddress);

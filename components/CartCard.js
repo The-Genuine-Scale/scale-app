@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const CartCard = ({ item, onIncreaseQty, onDecreaseQty }) => {
-  console.log(item)
   const handleIncreaseQty = () => {
     onIncreaseQty(item);
   };

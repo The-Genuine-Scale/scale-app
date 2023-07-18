@@ -12,25 +12,14 @@ export async function saveProduct(productData) {
 }
 export const updateProductDetails = async (productDetails) => {
   try {
-    console.log(productDetails)
     const productsCollection = collection(db, "Products");
     const productQuery = query(productsCollection, where("docId", "==", productDetails.docId));
     const productSnapshot = await getDocs(productQuery);
 
     if (!productSnapshot.empty) {
-      console.log(productSnapshot.docs)
       const productDoc = productSnapshot.docs[0];
       const productRef = doc(db, "Products", productDoc.id);
-      const reviews = productDetails.reviews;
-      console.log(reviews)
-      const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-      const averageRating = totalRating / reviews.length;
-      console.log( totalRating, averageRating)
-      const updatedProductDetails = {
-        ...productDetails,
-        rating: averageRating,
-      };
-      await updateDoc(productRef, updatedProductDetails);
+      await updateDoc(productRef, productDetails);
       console.log("Product details updated successfully");
     } else {
       console.log("Product does not exist");
@@ -42,7 +31,6 @@ export const updateProductDetails = async (productDetails) => {
 };
 
 export async function getProductById(docId) {
-  console.log("10");
   const prodCol = collection(db, "Products");
   const q = query(prodCol, where("docId", "==", docId));
   const prodSnapshot = await getDocs(q);
@@ -58,7 +46,6 @@ export async function getProductById(docId) {
 }
 
 export async function getProducts() {
-  console.log("11");
   const prodCol = collection(db, "Products");
   const prodSnapshot = await getDocs(prodCol);
   const prodList = prodSnapshot.docs.map((doc) => doc.data());

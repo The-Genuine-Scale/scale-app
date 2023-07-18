@@ -9,6 +9,8 @@ import ProductListScreen from "../screens/ProductListScreen";
 import SingleProductScreen from "../screens/SingleProductScreen";
 import WishlistScreen from "../screens/WishlistScreen";
 import CartScreen from "../screens/CartScreen";
+import CoBuyerScreen from "../screens/CoBuyerScreen";
+import CheckoutScreen from "../screens/CheckoutScreen";
 
 const Stack = createStackNavigator();
 
@@ -67,13 +69,20 @@ export default function HomeStack() {
               headerShown: false,
             }}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="CheckoutScreen"
             component={CheckoutScreen}
             options={{
               headerShown: false,
             }}
-          /> */}
+          />
+          <Stack.Screen
+            name="CoBuyerScreen"
+            component={CoBuyerScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack.Navigator>
       </View>
     </SafeAreaView>

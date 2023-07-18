@@ -25,7 +25,6 @@ function LoginScreen() {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
       storeData("uid", auth.currentUser.uid);
-      console.log("uid", auth.currentUser.uid);
       setEmail("");
       setPassword("");
       navigation.goBack();

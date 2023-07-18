@@ -19,7 +19,6 @@ const CustomCarousel = ({ data }) => {
       setCurrentIndex(index);
     }
   };
-  console.log(data)
   return (
     <View style={styles.container}>
       <ScrollView

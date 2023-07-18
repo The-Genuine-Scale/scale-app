@@ -15,7 +15,7 @@ import CustomHeader from "../components/CustomHeader";
 import { retrieveData } from "../localstorage/localstorage";
 import { getWishlistItems, handleWishlist } from "../api/wishlist";
 import { useNavigation } from "@react-navigation/native";
-import { addToCart, removeFromCart } from "../api/cart";
+import { addToCart, getItemCount, removeFromCart } from "../api/cart";
 
 const SingleProductScreen = ({ route }) => {
   const { docId } = route.params;
@@ -26,11 +26,12 @@ const SingleProductScreen = ({ route }) => {
 
   useEffect(() => {
     fetchProductById();
+    fetchItemCount()
   }, []);
   const handleRemoveFromCart = async () => {
     const userId = await retrieveData("uid");
     if (!userId) {
-      navigate("LoginScreen");
+      navigation.navigate("LoginScreen");
     }
     try {
       await removeFromCart(userId, docId);
@@ -41,18 +42,25 @@ const SingleProductScreen = ({ route }) => {
   };
   const handleAddToCart = async () => {
     const userId = await retrieveData("uid");
-    console.log(userId);
     if (!userId) {
       navigation.navigate("LoginScreen");
     }
     try {
       const result = await addToCart(userId, docId);
-      console.log(result);
       setQuantity(quantity + 1);
     } catch (error) {
       console.log(error);
     }
   };
+  async function fetchItemCount() {
+    try {
+      const userId = await retrieveData("uid");
+      const count = await getItemCount(userId, docId);
+      setQuantity(count);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const handleBuyNow = async () => {
     const userId = await retrieveData("uid");
     if (!userId) {
@@ -172,7 +180,7 @@ const SingleProductScreen = ({ route }) => {
                 color="black"
               />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.findCoBuyerContainer}>
+            <TouchableOpacity style={styles.findCoBuyerContainer} onPress={()=>{navigation.navigate("CoBuyerScreen",  { docId: docId });}}>
               <Text style={styles.findCoBuyerText}>Find Co-Buyer</Text>
               <MaterialIcons
                 name="keyboard-arrow-right"

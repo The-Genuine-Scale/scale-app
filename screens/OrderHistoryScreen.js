@@ -31,7 +31,6 @@ const OrderHistoryScreen = () => {
       } else {
         setUserId(userId);
         fetchOrderItems(userId);
-        console.log("getUserId", userId);
       }
     };
     getUserId();
@@ -41,7 +40,6 @@ const OrderHistoryScreen = () => {
       if (!userId) {
         navigateToLoginScreen();
       } else {
-        console.log("fetchOrderItems", userId);
         const orderHistoryData = await getOrders(userId);
         orderHistoryData.product = [...orderHistoryData.product, {quantity: item.quantity}]
         setOrderItems(orderHistoryData);

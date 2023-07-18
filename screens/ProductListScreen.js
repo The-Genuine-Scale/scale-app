@@ -30,7 +30,7 @@ const ProductListScreen = ({ route }) => {
       const wishlist = await getWishlistItems(userId);
       const updatedProductList = products.map((product) => ({
         ...product,
-        inWishlist: wishlist.some((item) => item.productId === product.docId),
+        inWishlist: wishlist?.some((item) => item.productId === product.docId),
       }));
       setProductList(updatedProductList);
     } catch (error) {

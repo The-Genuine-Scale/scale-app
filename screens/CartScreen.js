@@ -32,7 +32,6 @@ const CartScreen = () => {
       } else {
         setUserId(userId);
         fetchCartItems(userId);
-        console.log("getUserId", userId);
       }
     };
     getUserId();
@@ -42,7 +41,6 @@ const CartScreen = () => {
       if (!userId) {
         navigateToLoginScreen();
       } else {
-        console.log("fetchCartItems", userId);
         const items = await getCartItems(userId);
         const cartItemsWithDetails = await Promise.all(
           items.map(async (item) => {

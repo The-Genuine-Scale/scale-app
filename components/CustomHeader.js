@@ -14,7 +14,6 @@ const CustomHeader = (prop) => {
   const handleWishlist = () => {
     navigation.navigate('WishlistScreen')
   };
-  console.log(prop.signout, "hweh");
   return (
     <View style={styles.headerContainer}>
       <Image
