@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,24 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CustomHeader from "../components/CustomHeader";
+import { getOrders } from "../api/order";
+import { retrieveData } from "../localstorage/localstorage";
 
 const HomeScreen = () => {
+  const [productsForYou, setProductsForYou] = useState([]);
+  useEffect(() => {
+    fetchProductsForYou();
+  }, []);
+  const fetchProductsForYou = async () => {
+    try {
+      const userId = await retrieveData("uid");
+      const orderHistoryData = await getOrders(userId);
+      setProductsForYou(orderHistoryData);
+      console.log(productsForYou);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const productsForYouData = [
     {
       id: 1,
@@ -55,13 +71,13 @@ const HomeScreen = () => {
     },
     {
       id: 2,
-      title: "Books",
+      title: "Birthday",
       image: require("../assets/productCategory2.png"),
       link: "birthday",
     },
     {
       id: 3,
-      title: "Lamps",
+      title: "Cake",
       image: require("../assets/productCategory3.png"),
       link: "cake",
     },
@@ -128,7 +144,9 @@ const HomeScreen = () => {
     };
     const renderLatestDealItem = ({ item }) => (
       <TouchableOpacity
-        onPress={() => handleDealPress(item.link)}
+        onPress={() => {
+          navigation.navigate("LatestDealsScreen");
+        }}
         style={styles.latestDealsItem}
       >
         <Image
@@ -140,7 +158,11 @@ const HomeScreen = () => {
     );
 
     const renderTrendingNowItem = ({ item }) => (
-      <TouchableOpacity onPress={() => handleTrendingPress(item.link)}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("TrendingScreen");
+        }}
+      >
         <Image
           source={item.image}
           style={styles.trendingNowImage}
@@ -148,17 +170,28 @@ const HomeScreen = () => {
         />
       </TouchableOpacity>
     );
+
     const renderProductsForYouItem = ({ item }) => (
-      <TouchableOpacity style={styles.productsForYouCard}>
-        <Image
-          source={item.image}
-          style={styles.productsForYouCardImage}
-          resizeMode="cover"
-        />
-        <View style={styles.productsForYouCardOverlay}>
-          <Text style={styles.productsForYouCardTitle}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
+      (
+        <TouchableOpacity style={styles.productsForYouCard} onPress={()=>{navigation.navigate("SingleProductScreen", { docId: item.product.docId })}}>
+          <Image
+            source={{ uri: item.product.imgUrl[0] }}
+            style={styles.productsForYouCardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.productsForYouCardOverlay}>
+            <Text
+              style={styles.productsForYouCardTitle}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {item.product.name.length > 20
+                ? item.product.name.substring(0, 20) + "..."
+                : item.product.name}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )
     );
 
     const renderCategoryItem = ({ item }) => (
@@ -179,45 +212,45 @@ const HomeScreen = () => {
     );
     return (
       <>
-        <CustomHeader  signout={true}/>
+        <CustomHeader signout={true} />
         <View style={styles.mainContainer}>
-        <Text style={styles.greetingText}>
-          Hey <Text style={styles.boldText}>User!</Text>
-        </Text>
-        <Text style={styles.sectionTitle}>Latest Deals</Text>
-        <FlatList
-          data={latestDealsData}
-          renderItem={renderLatestDealItem}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2} // Set the number of columns to 2
-          contentContainerStyle={styles.latestDealsContainer} // Add container style
-        />
+          <Text style={styles.greetingText}>
+            Hey <Text style={styles.boldText}>User!</Text>
+          </Text>
+          <Text style={styles.sectionTitle}>Latest Deals</Text>
+          <FlatList
+            data={latestDealsData}
+            renderItem={renderLatestDealItem}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2} // Set the number of columns to 2
+            contentContainerStyle={styles.latestDealsContainer} // Add container style
+          />
 
-        <Text style={styles.sectionTitle}>Trending Now</Text>
-        <FlatList
-          data={trendingNowData}
-          renderItem={renderTrendingNowItem}
-          keyExtractor={(item) => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-          style={styles.trendingNowContainer}
-        />
-        <Text style={styles.sectionTitle}>Products for You</Text>
-        <FlatList
-          data={productsForYouData.filter((item) => item.rating > 4)}
-          renderItem={renderProductsForYouItem}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.productsForYouContainer}
-        />
-        <Text style={styles.sectionTitle}>Shop By Category</Text>
-        <FlatList
-          data={categoryData}
-          renderItem={renderCategoryItem}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={3}
-          style={styles.categoryContainer}
-        />
+          <Text style={styles.sectionTitle}>Trending Now</Text>
+          <FlatList
+            data={trendingNowData}
+            renderItem={renderTrendingNowItem}
+            keyExtractor={(item) => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            style={styles.trendingNowContainer}
+          />
+          <Text style={styles.sectionTitle}>Products for You</Text>
+          <FlatList
+            data={productsForYou}
+            renderItem={renderProductsForYouItem}
+            keyExtractor={(item) => item.product.docId.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.productsForYouContainer}
+          />
+          <Text style={styles.sectionTitle}>Shop By Category</Text>
+          <FlatList
+            data={categoryData}
+            renderItem={renderCategoryItem}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={3}
+            style={styles.categoryContainer}
+          />
         </View>
       </>
     );
@@ -245,7 +278,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  mainContainer:{
+  mainContainer: {
     margin: 20,
   },
   bottomSpace: {

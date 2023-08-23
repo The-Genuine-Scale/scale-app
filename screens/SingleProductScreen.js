@@ -180,7 +180,7 @@ const SingleProductScreen = ({ route }) => {
                 color="black"
               />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.findCoBuyerContainer} onPress={()=>{navigation.navigate("CoBuyerScreen",  { docId: docId });}}>
+            <TouchableOpacity style={styles.findCoBuyerContainer} onPress={()=>{}}>
               <Text style={styles.findCoBuyerText}>Find Co-Buyer</Text>
               <MaterialIcons
                 name="keyboard-arrow-right"

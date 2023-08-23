@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { getProductById, updateProductDetails } from "../api/product";
-import * as Location from "expo-location";
 import { retrieveData } from "../localstorage/localstorage";
 import { getUserDetails } from "../api/user";
+import { fetchUserLocation } from "../location/location";
 
 const CoBuyerScreen = ({ route }) => {
   const [productDetails, setProductDetails] = useState(null);
@@ -15,7 +15,8 @@ const CoBuyerScreen = ({ route }) => {
 
   useEffect(() => {
     fetchProductDetails(docId);
-    fetchUserLocation();
+    const location = fetchUserLocation();
+    setUserLocation(location);
   }, []);
 
   const fetchProductDetails = async (docId) => {
@@ -25,24 +26,6 @@ const CoBuyerScreen = ({ route }) => {
       setCoBuyer(product.coBuyer);
     } catch (error) {
       console.log("Error fetching product details:", error);
-    }
-  };
-
-  const fetchUserLocation = async () => {
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Location permission not granted");
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync();
-      setUserLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-    } catch (error) {
-      console.log("Error fetching user location:", error);
     }
   };
 
@@ -74,49 +57,15 @@ const CoBuyerScreen = ({ route }) => {
     return productDetails?.price - discount;
   };
 
-  const calculateDistance = (location1, location2) => {
-    const earthRadius = 6371;
-    const lat1 = location1.latitude;
-    const lon1 = location1.longitude;
-    const lat2 = location2.latitude;
-    const lon2 = location2.longitude;
-
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = earthRadius * c;
-
-    return distance;
-  };
-
-  const toRadians = (angle) => {
-    return (angle * Math.PI) / 180;
-  };
-
-  const coBuyerWithinRadius = coBuyer?.filter((e) => {
-    if (userLocation) {
-      const distance = calculateDistance(userLocation, e.location);
-      const radius = 5;
-      return distance <= radius;
-    }
-    return false;
-  });
-
   return (
     <View style={styles.container}>
       <TouchableOpacity
         onPress={handleAddToCoBuyerList}
         style={styles.addButton}
       >
-        <Text style={styles.addButtonText}>Add myself to the co-buyer list</Text>
+        <Text style={styles.addButtonText}>
+          Add myself to the co-buyer list
+        </Text>
       </TouchableOpacity>
 
       {coBuyerWithinRadius?.map((coBuyer) => (

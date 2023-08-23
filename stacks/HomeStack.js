@@ -11,6 +11,8 @@ import WishlistScreen from "../screens/WishlistScreen";
 import CartScreen from "../screens/CartScreen";
 import CoBuyerScreen from "../screens/CoBuyerScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
+import TrendingScreen from "../screens/TrendingScreen";
+import LatestDealsScreen from "../screens/LatestDealsScreen";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +46,20 @@ export default function HomeStack() {
           <Stack.Screen
             name="ProductListScreen"
             component={ProductListScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="TrendingScreen"
+            component={TrendingScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="LatestDealsScreen"
+            component={LatestDealsScreen}
             options={{
               headerShown: false,
             }}

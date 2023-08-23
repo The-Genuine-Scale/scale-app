@@ -11,10 +11,11 @@ import {
 import CartCard from "../components/CartCard";
 import { getCartItems } from "../api/cart";
 import { getProductById } from "../api/product";
-import { updateOrderHistory } from "../api/order";
+import { addOrderHistory } from "../api/order";
 import { addAddressToUser, getAddressesByUser } from "../api/user";
 import { getUserDetails } from "../api/user";
 import { retrieveData } from "../localstorage/localstorage";
+import { fetchUserLocation } from "../location/location";
 
 const CheckoutScreen = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -22,6 +23,7 @@ const CheckoutScreen = () => {
   const [addressOptions, setAddressOptions] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [newAddress, setNewAddress] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [userId, setUserId] = useState(null);
 
@@ -38,6 +40,8 @@ const CheckoutScreen = () => {
       }
     };
     getUserId();
+    const location = fetchUserLocation();
+    setUserLocation(location);
   }, [userId]);
 
   const fetchUserDetails = async (userId) => {
@@ -56,12 +60,14 @@ const CheckoutScreen = () => {
   const fetchCartItems = async (userId) => {
     try {
       const items = await getCartItems(userId);
+      console.log('items:', items)
       const cartItemsWithDetails = await Promise.all(
         items.map(async (item) => {
           const product = await getProductById(item.productId);
-          return { ...product, quantity: item.quantity };
+          return { ...product, quantity: item.quantity};
         })
       );
+      console.log('cartItemsWithDetails:', cartItemsWithDetails)
       setCartItems(cartItemsWithDetails);
     } catch (error) {
       console.log(error);
@@ -104,9 +110,11 @@ const CheckoutScreen = () => {
           paymentMethod,
           product: item,
           quantity: item.quantity,
+          price: item.price,
+          status: 'Recieved'
         };
-
-        await updateOrderHistory(userId, orderDetails);
+        console.log('orderDetails: ',orderDetails)
+        await addOrderHistory(userId, orderDetails);
       }
 
       setCartItems([]);

@@ -16,7 +16,6 @@ import { getOrders } from "../api/order";
 
 const OrderHistoryScreen = () => {
   const [orderItems, setOrderItems] = useState([]);
-  const [userId, setUserId] = useState(null);
   const navigation = useNavigation();
 
   const navigateToLoginScreen = () => {
@@ -29,19 +28,17 @@ const OrderHistoryScreen = () => {
       if (!userId) {
         navigateToLoginScreen();
       } else {
-        setUserId(userId);
         fetchOrderItems(userId);
       }
     };
     getUserId();
-  }, [userId]);
+  }, []);
   const fetchOrderItems = async (userId) => {
     try {
       if (!userId) {
         navigateToLoginScreen();
       } else {
         const orderHistoryData = await getOrders(userId);
-        orderHistoryData.product = [...orderHistoryData.product, {quantity: item.quantity}]
         setOrderItems(orderHistoryData);
       }
     } catch (error) {
